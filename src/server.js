@@ -4,8 +4,7 @@ const app = express();
 const PORT = 8080;
 
 app.use(cors());
-
-
+app.use(express.json());
 // Danh sách blog (tạm thời hardcode)
 const blogs = [
   { id: 1, title: 'Blog 1', content: 'Content of blog 1' },
@@ -25,6 +24,22 @@ app.get('/api/blogs/:id', (req, res) => {
     res.json(blog);
   } else {
     res.status(404).json({ message: 'Blog not found' });
+  }
+});
+
+app.post('/api/addPost', (req, res) => {
+  console.log(req.body);
+  const { title, content } = req.body; // Lấy dữ liệu từ body của request
+  if (!title || !content) {
+    res.status(400).json({ message: 'Title and content are required' });
+  } else {
+    const newPost = {
+      id: blogs.length + 1, // Tạo ID mới dựa trên số lượng bài đăng hiện tại
+      title,
+      content
+    };
+    blogs.push(newPost); // Thêm bài đăng mới vào danh sách blog
+    res.status(201).json(newPost); // Trả về bài đăng mới đã được tạo
   }
 });
 
